@@ -1,4 +1,3 @@
-
 /**
  * A simple class to demonstrate dynamic behavior with arrays. Objects of this
  * class store strings in an array that grows to match the demand for storage.
@@ -23,9 +22,6 @@ public class DynamicArray_Week02 {
     /** The underlying array for this class */
     private String[] foundation;
 
-    /** Measures how many places in the array are in use */
-    private int occupancy;
-
     /**
      * Full constructor. Initializes the underlying array to the specified size. The
      * size must be a positive, non zero value. Otherwise the constructor uses the
@@ -35,22 +31,11 @@ public class DynamicArray_Week02 {
         // If size <= 0 use default -- this is a good time to demo ternary operator
         size = (size > 0) ? size : DEFAULT_SIZE;
         this.foundation = new String[size];
-        this.occupancy = 0;
     } // full constructor
 
-    /**
-     * Array-based constructor -- used for testing.
-     * 
-     * WARNING: SHALLOW ARRAY COPY
-     * 
-     * @param data
-     */
+    /** Array-based constructor -- used for testing */
     public DynamicArray_Week02(String[] data) {
-        this(DEFAULT_SIZE);
-        if (data != null) {
-            this.foundation = data;
-            this.occupancy = data.length;
-        }
+        this.foundation = data;
     } // array-based constructor
 
     /**
@@ -61,131 +46,84 @@ public class DynamicArray_Week02 {
     } // default constructor
 
     /**
-     * Checks if the specified string is present in the dynamic array.
-     * 
-     * @param target The string to search for in the array
-     * @return true if the string is found, false otherwise
+     * returns 'true' if 'target' is present in the underlying array and 'false' if it isn't.
+     * @param target the string to search for in the array
+     * @return true if the target is found
      */
-    public boolean contains(String target) {
+    public boolean contains(String target){
+        if (foundation == null || target == null) {
+            return false;
+        }
+
+        int index = 0;
         boolean found = false;
-        /*
-         * Before introducing this.occupancy in the object, the method traversed
-         * this.foundation through its entire length, i.e., the while loop allowed its
-         * index i to reach this.foundation.length. As we saw, however, not every
-         * element in this.foundation may be used. this.occupancy tells us what is the
-         * last used element in this.foundation. There is no point searching after that
-         * element, as all values are going to be null. So, for the while loop here we
-         * change the condition from while(i<this.foundation length &...) to
-         * while(i<this.occupancy &&...)
-         */
-        if (target != null && this.foundation != null) {
-            int i = 0;
-            // No need to guard against occupancy==0, because if array is empty, loop will
-            // not even run.
-            while (i < this.occupancy && !found) {
-                found = this.foundation[i] != null && this.foundation[i].equals(target);
-                i++;
+        while (index < foundation.length && !found){
+            if (foundation[index].equals(target)){
+                found = true;
             }
+            index++;
         }
         return found;
-    } // method contains
+    }
 
     /**
-     * Retrieves the string at the specified index in the array.
-     * 
-     * @param index The index of the string to retrieve
-     * @return The string at the specified index, or null if the index is invalid
+     * returns the string in position `[index]` in the underlying array or null if something wrong.
+     * @param index
+     * @return 
      */
-    public String get(int index) {
-        String string = null;
-        // No need to guard against occupancy==0, because if array is empty, the method
-        // will return null anyway
-        if (index >= 0 && this.foundation != null && index < this.foundation.length) {
-            string = this.foundation[index];
+    public String get(int index){
+        String stringAtPos = null;
+
+        //check if index exists
+        if (index >= 0 && index < foundation.length){
+            stringAtPos = foundation[index];
         }
-        return string;
-    } // method get
+        return stringAtPos;
+    }
 
     /**
-     * Removes the string at the specified index in the array and sets its position
-     * to null. Then it moves every element to the right of the removed element, one
-     * position to the left. The position of the last element to be copied to the
-     * left is then emptied out (null).
-     * 
-     * @param index The index of the string to remove
-     * @return The string that was removed, or null if the index is invalid
+     * returns the String in position `[index]` in the underlying array then removes that value from the array.
+     * @param index
+     * @return 
      */
-    public String remove(int index) {
-        String removed = null;
-        // We check occupancy, because there is no reason to perform this in an empty
-        // array
-        if (this.occupancy > 0 && index >= 0 && index < this.foundation.length) {
-            removed = this.foundation[index];
-            this.foundation[index] = null;
-            // Shift things after the removed string, one position to the left
-            for (int i = index; i < occupancy - 1; i++) {
-                this.foundation[i] = this.foundation[i + 1];
-            }
-            // Previously last occupied cell, now empty
-            this.foundation[occupancy - 1] = null;
-            // update occupancy
-            this.occupancy--;
+    public String remove(int index){
+        String value = null;
+        if (index >= 0 && index < foundation.length){
+            value = foundation[index];
+            foundation[index] = null;
         }
-        return removed;
-    } // method remove
+        return value;
+    }
 
     /**
-     * Deletes the string at the specified index in the array.
-     * 
-     * This method uses this.remove and simply ignores the returned string.
-     * 
-     * @param index The index of the string to delete
+     * removes the value from position `[index]` in the underlying array
+     * @param index
      */
-    public void delete(int index) {
-        String whatEver = remove(index);
-    } // method delete
-
-    /**
-     * Resizes the underlying array by increasing its capacity by 1.
-     * 
-     * This method is called internally when the current array reaches its capacity
-     * and a new element needs to be inserted.
-     */
-    private void resize() {
-        String[] temp = new String[this.foundation.length + 1];
-        /*
-         * Instead of:
-         * for (int i = 0; i < this.foundation.length; i++) {
-         * we can write
-         * for (int i = 0; i < this.occupancy; i++) {
-         * since there is no reason to copy null values from one array to another.
-         */
-        for (int i = 0; i < this.occupancy; i++) {
-            temp[i] = this.foundation[i];
+    public void delete(int index){
+        if (index >= 0 && index < foundation.length){
+            foundation[index] = null;
         }
-        this.foundation = temp;
-    } // method resize
+    }
 
     /**
-     * Inserts a new string into the dynamic array.
-     * 
-     * If the string is not null and the array is full, it will be resized to
-     * accommodate the new element.
-     * 
-     * @param string The string to insert into the array
+     * adds a string in the `DynamicArray` object, overcoming the fixed size of the `foundation` array.
+     * @param string
      */
-    public void insert(String string) {
-        // Guard against null argument
-        if (string != null) {
-            // If there is no room left in underlying array, resize it first
-            if (this.occupancy == this.foundation.length) {
-                this.resize();
-            }
-            // Room in underlying array assured
-            this.foundation[this.occupancy] = string;
-            this.occupancy++;
+    public void insert(String string){
+        resize();
+        foundation[foundation.length-1] = string;
+    }
+
+    /**
+     * increases the size of the `foundation` array as needed to accomodate additional strings inserted to the object.
+     */
+    private void resize(){
+        String [] newFoundation = new String[foundation.length + 1];
+        for(int i = 0; i < foundation.length; i++){
+            newFoundation[i] = foundation[i];
         }
-    } // method insert
+        foundation = newFoundation;
+    }
 
     /** Driver/test code */
     public static void main(String[] args) {
@@ -194,8 +132,8 @@ public class DynamicArray_Week02 {
         final String NON_EXISTING = "COBOL";
         // Test data
         String[] testData = { "Java", "Python", "C", "C++", "Fortran" };
-        DynamicArray_Week02 test = new DynamicArray_Week02(testData);
-        DynamicArray_Week02 tset = new DynamicArray_Week02();
+        DynamicArray test = new DynamicArray(testData);
+        DynamicArray tset = new DynamicArray(null);
         // Naive testing - I am ashamed to do this but I need
         // to keep things simple for now.
         String testContainsNullTarget = (!test.contains(null)) ? PASS : FAIL;
@@ -206,7 +144,7 @@ public class DynamicArray_Week02 {
         String testGet = (test.get(0).equals(testData[0])) ? PASS : FAIL;
         String testGetOutOfBounds = (test.get(testData.length + 1) == null) ? PASS : FAIL;
         String testRemove = (testData[1].equals(test.remove(1))) ? PASS : FAIL;
-        String testRemoveNull = (tset.remove(1) == null) ? PASS : FAIL;
+        String testRemoveNull = (test.remove(1) == null) ? PASS : FAIL;
         String testRemoveOutOfBounds = (test.remove(testData.length + 1) == null) ? PASS : FAIL;
         System.out.printf("\nTest for contains(null): ............... %s", testContainsNullTarget);
         System.out.printf("\nTest for contains on null foundation: .. %s", testContainsEmptyData);
@@ -217,15 +155,11 @@ public class DynamicArray_Week02 {
         System.out.printf("\nTest for get(out of bounds): ........... %s\n", testGetOutOfBounds);
         System.out.printf("\nTest for remove(1): .................... %s", testRemove);
         System.out.printf("\nTest for remove(null): ................. %s", testRemoveNull);
-        System.out.printf("\nTest for remove(out of bounds): ........ %s\n", testRemoveOutOfBounds);
+        System.out.printf("\nTest for remove(out of bounds): ........ %s\n\n", testRemoveOutOfBounds);
         // If all is good, these two statemets will not crash the program
         test.insert("Pascal");
         test.insert("Basic");
-        // Wow ... magic values!
-        String testPascal = (test.get(testData.length - 1).equals("Pascal")) ? PASS : FAIL;
-        String testBasic = (test.get(testData.length).equals("Basic")) ? PASS : FAIL;
-        System.out.printf("\nTest for insert(Pascal): ............... %s", testPascal);
-        System.out.printf("\nTest for insert(Basic): ................ %s\n\n", testBasic);
     } // method main
+
 
 } // class DynamicArray
