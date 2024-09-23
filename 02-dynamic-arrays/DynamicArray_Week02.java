@@ -115,7 +115,7 @@ public class DynamicArray_Week02 {
     }
 
     /**
-     * increases the size of the `foundation` array as needed to accomodate additional strings inserted to the object.
+     * increases the size of the  `foundation` array as needed to accomodate additional strings inserted to the object.
      */
     private void resize(){
         String [] newFoundation = new String[foundation.length + 1];
