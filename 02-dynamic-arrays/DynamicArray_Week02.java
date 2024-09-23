@@ -124,7 +124,6 @@ public class DynamicArray_Week02 {
         }
         foundation = newFoundation;
     }
-
     /** Driver/test code */
     public static void main(String[] args) {
         final String PASS = "Pass";

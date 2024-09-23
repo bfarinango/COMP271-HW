@@ -1,4 +1,3 @@
-
 /**
  * A simple class to demonstrate dynamic behavior with arrays. Objects of this
  * class store strings in an array that grows to match the demand for storage.
@@ -15,6 +14,7 @@
  * 
  * will have initially room for 4 strings.
  */
+import java.util.Scanner;
 public class DynamicArray {
 
     /** Default size for underlying array */
@@ -187,14 +187,91 @@ public class DynamicArray {
         }
     } // method insert
 
+    /**
+     * creates a textual representation of the object, where each element is 
+     * separated by a ", ". The resulting string is enclosed in "[]" brackets.
+     * @return A string representation of the object
+     * returns "[]" if array is null or empty
+     */
+    public String toString() {
+        String fullString = "[";
+        //check if array exists and is not empty
+        if (this.foundation != null && this.foundation.length > 0) {
+            //adds the first element of array
+            if (this.foundation[0] == null) {
+                fullString += "null";
+            } else {
+                fullString += this.foundation[0];
+            }
+            //iterates through the rest of the array and updates fullString
+            for (int i = 1; i < this.foundation.length; i++) {
+                fullString += ", ";
+                //add "null" if element is null
+                if (this.foundation[i] == null) {
+                    fullString += "null";
+                } else {
+                    fullString += this.foundation[i];
+                }
+            }
+        }
+        fullString += "]";
+        return fullString;
+    }
+
+    /**
+     * returns the array position of `string` in the underlying array. 
+     * If there are multiple occurences of `string` in `this.foundation`, the method returns the position of the first occurrence. 
+     * If there are none, the method shall return -1.
+     * @param string The string used to search for in the array
+     * @return The index of the first occurence of the string, or -1 if not found.
+     */
+    public int index(String string){
+        //start at index -1 if string is not found
+        int index = -1;
+        //checks if string has been found
+        boolean found = false;
+        for (int i = 0; i < this.foundation.length; i++){
+            //checks if element equals string and it's the first occurence
+            if(this.foundation[i].equals(string) && !found){
+                index = i;
+                found = true;
+            }
+        }
+        return index; 
+    }
+
+    /**
+     * returns the percentage of the underlying array elements that are current not null.
+     * @return The percentage of non-null elements in the array, as a double value between 0 and 100.
+     */
+    public double usage(){
+        double count = 0;
+        //iterates through foundation array
+        for(int i = 0; i < this.foundation.length; i++){
+            //increments counter if element is not null
+            if(this.foundation[i] != null){
+                count++;
+            }
+        }
+        //calculates the percentage of non-null elements
+        double percentage = (count/this.foundation.length) * 100;
+        //returns rounded percentage
+        return Math.round(percentage * 100.0)/100.0;
+    }
+
     /** Driver/test code */
     public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
         final String PASS = "Pass";
         final String FAIL = "Fail";
         final String NON_EXISTING = "COBOL";
         // Test data
         String[] testData = { "Java", "Python", "C", "C++", "Fortran" };
         DynamicArray test = new DynamicArray(testData);
+        System.out.println(test.toString());
+        System.out.println(test.index("C++"));
+        System.out.println(test.usage());
+        
     } // method main
 
 } // class DynamicArray
